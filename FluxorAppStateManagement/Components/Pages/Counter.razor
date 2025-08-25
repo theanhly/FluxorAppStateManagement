@@ -1,0 +1,17 @@
+﻿@page "/counter"
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+@foreach (var counter in viewState.CounterState.Counters)
+{
+    <span>Counter: @counter.Key</span>
+    <p role="status">Current count: @counter.Value</p>
+}
+
+<input @bind=id />
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<button class="btn btn-primary" @onclick="AddNewCounter">Add new counter</button>

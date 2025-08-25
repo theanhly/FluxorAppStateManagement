@@ -1,0 +1,48 @@
+﻿@page "/weather"
+
+<PageTitle>Weather</PageTitle>
+
+<h1>Counter</h1>
+
+@foreach (var counter in weatherViewState.CounterState.Counters)
+{
+    <span>Counter: @counter.Key</span>
+    <p role="status">Current count: @counter.Value</p>
+}
+
+<h1>Weather</h1>
+
+<p>This section demonstrates showing data.</p>
+
+<div>
+    @if (weatherViewState.WeatherState.Forecasts == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var forecast in weatherViewState.WeatherState.Forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>
+
+<button @onclick="UpdateWeather">Update weather</button>
