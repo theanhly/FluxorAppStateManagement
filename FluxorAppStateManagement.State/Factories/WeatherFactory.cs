@@ -1,39 +1,27 @@
 ﻿using FluxorAppStateManagement.Domain;
-using System.Collections.ObjectModel;
-using FluxorAppStateManagement.State.Events.Notify;
 using FluxorAppStateManagement.State.Events.Update;
-using FluxorAppStateManagement.State.State;
 
 namespace FluxorAppStateManagement.State.Factories
 {
-    public class WeatherFactory(WeatherService weatherService)
+    public class WeatherFactory
     {
-        public EventArgs GetState()
+        private readonly WeatherService weatherService;
+
+        public WeatherFactory(WeatherService weatherService)
         {
-            return new NewWeatherStateActionEvent()
-            {
-                ApplicationStateTransition = _ => new WeatherState()
-                {
-                    Forecasts = new ReadOnlyCollection<Weather>(weatherService.GetForecasts())
-                }
-            };
+            this.weatherService = weatherService;
+        }
+        public void GetState()
+        {
+            weatherService.GetForecasts();
         }
 
-        public EventArgs UpdateState(ActionEvent actionEvent)
+        public void UpdateState(ActionEvent actionEvent)
         {
             if (actionEvent is NewWeatherActionEvent)
             {
                 weatherService.AddNewForecast();
-                return new NewWeatherStateActionEvent()
-                {
-                    ApplicationStateTransition = state => state with
-                    {
-                        Forecasts = new ReadOnlyCollection<Weather>(weatherService.GetForecasts())
-                    }
-                };
             }
-
-            return EventArgs.Empty;
         }
     }
 }

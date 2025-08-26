@@ -5,8 +5,6 @@ namespace FluxorAppStateManagement.Domain
 {
     public class AutomaticServices
     {
-        public event EventHandler<EventArgs> StateChanged;
-
         private readonly CounterService counterService;
         private readonly WeatherService weatherService;
         private Timer timer;
@@ -16,7 +14,7 @@ namespace FluxorAppStateManagement.Domain
             this.weatherService = weatherService;
 
             timer = new Timer();
-            timer.AutoReset = false;
+            timer.AutoReset = true;
             timer.Interval = 10000;
             timer.Start();
             timer.Elapsed += TimerCallback;

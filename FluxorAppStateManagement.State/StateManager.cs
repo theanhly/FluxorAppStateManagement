@@ -1,53 +1,66 @@
-﻿using FluxorAppStateManagement.State.Events.Update;
+﻿using FluxorAppStateManagement.Domain;
+using FluxorAppStateManagement.Domain.Events;
+using FluxorAppStateManagement.State.Events.Update;
 using FluxorAppStateManagement.State.Factories;
 using FluxorAppStateManagement.State.State;
 
 namespace FluxorAppStateManagement.State
 {
-    public class StateManager(CounterFactory counterFactory, WeatherFactory weatherFactory)
+    public class StateManager
     {
-        public event EventHandler<EventArgs> StateChanged;
+        public event EventHandler<ReduceEventArgs> StateChanged;
+        private readonly CounterFactory counterFactory;
+        private readonly WeatherFactory weatherFactory;
+
+        public StateManager(
+            CounterFactory counterFactory,
+            WeatherFactory weatherFactory,
+            CounterService counterService,
+            WeatherService weatherService)
+        {
+            this.counterFactory = counterFactory;
+            this.weatherFactory = weatherFactory;
+
+            counterService.CounterChanged += NotifyNewState;
+            weatherService.WeatherChanged += NotifyNewState;
+        }
 
         public void GetState(IProjectedApplicationState projectedStates)
         {
             foreach (var type in projectedStates.GetStates())
             {
-                var args = EventArgs.Empty;
-
                 if (type == typeof(CounterState))
                 {
-                    args = counterFactory.GetState();
+                    counterFactory.GetState();
                 }
                 else if (type == typeof(WeatherState))
                 {
                     _ = GetForecastsAsync();
                 }
-
-                StateChanged?.Invoke(this, args);
             }
         }
 
         public void UpdateState(ActionEvent actionEvent)
         {
-            var args = EventArgs.Empty;
-
             if (actionEvent is NewCounterActionEvent or IncrementCounterActionEvent)
             {
-                args = counterFactory.UpdateState(actionEvent);
+                counterFactory.UpdateState(actionEvent);
             }
             else if (actionEvent is NewWeatherActionEvent)
             {
-                args = weatherFactory.UpdateState(actionEvent);
+                weatherFactory.UpdateState(actionEvent);
             }
+        }
 
-            StateChanged?.Invoke(this, args);
+        public void NotifyNewState(object sender, ReduceEventArgs args)
+        {
+            StateChanged?.Invoke(sender, args);
         }
 
         private async Task GetForecastsAsync()
         {
             await Task.Delay(1000);
-            var args = weatherFactory.GetState();
-            StateChanged?.Invoke(this, args);
+            weatherFactory.GetState();
         }
     }
 }

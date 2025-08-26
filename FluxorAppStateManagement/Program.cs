@@ -19,9 +19,10 @@ namespace FluxorAppStateManagement
             builder.Services.AddSingleton<CounterFactory>();
             builder.Services.AddSingleton<WeatherService>();
             builder.Services.AddSingleton<WeatherFactory>();
+            builder.Services.AddSingleton<AutomaticServices>();
 
             var app = builder.Build();
-
+            app.Services.GetRequiredService<AutomaticServices>();
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {

@@ -1,4 +1,5 @@
-﻿using FluxorAppStateManagement.State;
+﻿using FluxorAppStateManagement.Domain.Events;
+using FluxorAppStateManagement.State;
 using FluxorAppStateManagement.State.Events.Update;
 using FluxorAppStateManagement.State.State;
 using Microsoft.AspNetCore.Components;
@@ -13,20 +14,20 @@ namespace FluxorAppStateManagement.Components.Pages
 
         public void Dispose()
         {
-            StateManager.StateChanged -= StateChanged;
+            StateManager.StateChanged -= StateChangedAsync;
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            StateManager.StateChanged += StateChanged;
-            StateManager.GetState(weatherViewState);;
+            StateManager.StateChanged += StateChangedAsync;
+            StateManager.GetState(weatherViewState);
         }
 
-        private void StateChanged(object obj, EventArgs newStateActionEvent)
+        private async void StateChangedAsync(object obj, ReduceEventArgs newStateActionEvent)
         {
-            weatherViewState.ApplyNewState(newStateActionEvent);
-            StateHasChanged();
+            newStateActionEvent.InvokeReducer(weatherViewState);
+            await InvokeAsync(StateHasChanged);
         }
 
         private void UpdateWeather()

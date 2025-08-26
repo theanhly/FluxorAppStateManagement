@@ -1,54 +1,32 @@
-﻿using System.Collections.ObjectModel;
-using FluxorAppStateManagement.Domain;
-using FluxorAppStateManagement.State.Events.Notify;
+﻿using FluxorAppStateManagement.Domain;
 using FluxorAppStateManagement.State.Events.Update;
-using FluxorAppStateManagement.State.State;
 
 namespace FluxorAppStateManagement.State.Factories
 {
-    public class CounterFactory(CounterService counterService)
+    public class CounterFactory
     {
-        public NewCounterStateActionEvent GetState()
+        private CounterService counterService;
+
+        public CounterFactory(CounterService counterService)
         {
-            return new NewCounterStateActionEvent()
-            {
-                ApplicationStateTransition = _ => new CounterState()
-                {
-                    Counters = new ReadOnlyDictionary<Guid, int>(counterService.GetCounters())
-                }
-            };
+            this.counterService = counterService;
         }
 
-        public EventArgs UpdateState(ActionEvent actionEvent)
+        public void GetState()
+        {
+            counterService.GetCounters();
+        }
+
+        public void UpdateState(ActionEvent actionEvent)
         {
             if (actionEvent is NewCounterActionEvent)
             {
                 counterService.AddNewCounter();
-                return new NewCounterStateActionEvent()
-                {
-                    ApplicationStateTransition = state => state with
-                    {
-                        Counters = new ReadOnlyDictionary<Guid, int>(counterService.GetCounters())
-                    }
-                };
             }
             else if (actionEvent is IncrementCounterActionEvent incrementCounterActionEvent)
             {
-                var success = counterService.IncrementCounter(incrementCounterActionEvent.CounterId);
-
-                if (success)
-                {
-                    return new NewCounterStateActionEvent()
-                    {
-                        ApplicationStateTransition = state => state with
-                        {
-                            Counters = new ReadOnlyDictionary<Guid, int>(counterService.GetCounters())
-                        }
-                    };
-                }
+                counterService.IncrementCounter(incrementCounterActionEvent.CounterId);
             }
-
-            return new();
         }
     }
 }

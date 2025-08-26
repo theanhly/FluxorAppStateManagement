@@ -6,7 +6,7 @@
 
 @foreach (var counter in viewState.CounterState.Counters)
 {
-    <span>Counter: @counter.Key</span>
+    <span>Counter: @counter.Key</span> <button style="padding: 0; border: 0;" @onclick="@(() => id = counter.Key)">Copy to input</button>
     <p role="status">Current count: @counter.Value</p>
 }
 
