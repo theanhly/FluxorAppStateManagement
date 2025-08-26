@@ -1,6 +1,6 @@
-﻿using FluxorAppStateManagement.Domain.Events;
+﻿using FluxorAppStateManagement.Domain;
+using FluxorAppStateManagement.Domain.Events;
 using FluxorAppStateManagement.State;
-using FluxorAppStateManagement.State.Events.Update;
 using FluxorAppStateManagement.State.State;
 using Microsoft.AspNetCore.Components;
 
@@ -10,6 +10,9 @@ namespace FluxorAppStateManagement.Components.Pages
     {
         [Inject]
         private StateManager StateManager { get; set; }
+
+        [Inject]
+        private CounterService CounterService { get; set; }
 
         private CounterViewState viewState = new();
 
@@ -24,17 +27,17 @@ namespace FluxorAppStateManagement.Components.Pages
         {
             base.OnInitialized();
             StateManager.StateChanged += StateChangedAsync;
-            StateManager.GetState(viewState); ;
+            CounterService.GetCounters();
         }
 
         private void IncrementCount()
         {
-            StateManager.UpdateState(new IncrementCounterActionEvent() { CounterId = id });
+            CounterService.IncrementCounter(id);
         }
 
         private void AddNewCounter()
         {
-            StateManager.UpdateState(new NewCounterActionEvent());
+            CounterService.AddNewCounter();
         }
 
         private async void StateChangedAsync(object obj, ReduceEventArgs newStateActionEvent)

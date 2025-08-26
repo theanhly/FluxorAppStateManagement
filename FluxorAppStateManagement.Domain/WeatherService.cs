@@ -10,7 +10,11 @@ namespace FluxorAppStateManagement.Domain
 
         public void GetForecasts()
         {
-            WeatherChanged?.Invoke(this, new ForecastsEventArgs() { Forecasts = forecasts });
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(1000);
+                WeatherChanged?.Invoke(this, new ForecastsEventArgs() { Forecasts = forecasts });
+            });
         }
 
         public void AddNewForecast() {

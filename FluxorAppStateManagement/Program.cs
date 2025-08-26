@@ -1,7 +1,6 @@
 using FluxorAppStateManagement.Components;
 using FluxorAppStateManagement.Domain;
 using FluxorAppStateManagement.State;
-using FluxorAppStateManagement.State.Factories;
 
 namespace FluxorAppStateManagement
 {
@@ -16,9 +15,7 @@ namespace FluxorAppStateManagement
                 .AddInteractiveServerComponents();
             builder.Services.AddSingleton<StateManager>();
             builder.Services.AddSingleton<CounterService>();
-            builder.Services.AddSingleton<CounterFactory>();
             builder.Services.AddSingleton<WeatherService>();
-            builder.Services.AddSingleton<WeatherFactory>();
             builder.Services.AddSingleton<AutomaticServices>();
 
             var app = builder.Build();
