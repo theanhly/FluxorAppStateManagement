@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FluxorAppStateManagement.Domain.Events
+﻿namespace FluxorAppStateManagement.Domain.Events
 {
     public class NewCounterEventArgs : ReduceEventArgs
     {
         public Guid Id { get; init; }
 
         public int Count { get; init; }
-        public override void InvokeReducer(IProjectedApplicationState applicationState)
+        public override IReadOnlyList<IProjectedApplicationState> InvokeStateCreator(IProjectedStateCreator creator)
         {
-            applicationState.Reduce(this);
+            return creator.Create(this);
         }
     }
 }

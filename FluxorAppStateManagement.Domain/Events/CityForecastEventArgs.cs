@@ -1,10 +1,8 @@
 ﻿namespace FluxorAppStateManagement.Domain.Events
 {
-    public class NewCountEventArgs : ReduceEventArgs
+    public class CityForecastEventArgs : ReduceEventArgs
     {
-        public Guid Id { get; init; }
-
-        public int Count { get; init; }
+        public IList<string> Cities { get; set; }
 
         public override IReadOnlyList<IProjectedApplicationState> InvokeStateCreator(IProjectedStateCreator creator)
         {

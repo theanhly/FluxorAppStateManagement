@@ -16,6 +16,8 @@ namespace FluxorAppStateManagement
             builder.Services.AddSingleton<StateManager>();
             builder.Services.AddSingleton<CounterService>();
             builder.Services.AddSingleton<WeatherService>();
+            builder.Services.AddSingleton<CounterBackend>();
+            builder.Services.AddSingleton<WeatherBackend>();
             builder.Services.AddSingleton<AutomaticServices>();
 
             var app = builder.Build();

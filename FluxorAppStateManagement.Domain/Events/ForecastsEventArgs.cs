@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FluxorAppStateManagement.Domain.Events
+﻿namespace FluxorAppStateManagement.Domain.Events
 {
     public class ForecastsEventArgs : ReduceEventArgs
     {
         public IList<Weather> Forecasts { get; set; }
+        public IList<Weather> RegionalForecasts { get; set; }
 
-        public override void InvokeReducer(IProjectedApplicationState applicationState)
+        public override IReadOnlyList<IProjectedApplicationState> InvokeStateCreator(IProjectedStateCreator creator)
         {
-            applicationState.Reduce(this);
+            return creator.Create(this);
         }
     }
 }

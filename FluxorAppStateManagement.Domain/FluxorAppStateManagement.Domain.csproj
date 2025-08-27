@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FluxorAppStateManagement.Backend\FluxorAppStateManagement.Backend.csproj" />
+  </ItemGroup>
+
 </Project>
