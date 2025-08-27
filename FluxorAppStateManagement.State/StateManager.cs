@@ -30,10 +30,11 @@ namespace FluxorAppStateManagement.State
         private void CreateProjectedApplicationStates(object sender, ReduceEventArgs args)
         {
             var stateCreator = stateCreatorFactory.CreateCreator(state);
-
+            var newState = args.InvokeStateCreator(stateCreator);
+            state = newState;
             StateChanged?.Invoke(sender, new NewProjectedApplicationStateEventArgs()
             {
-                NewState = args.InvokeStateCreator(stateCreator)
+                NewState = newState
             });
         }
     }
