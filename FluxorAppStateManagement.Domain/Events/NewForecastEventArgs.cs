@@ -2,7 +2,7 @@
 {
     public class NewForecastEventArgs : ReduceEventArgs
     {
-        public Weather Weather { get; init; }
+        public string City { get; init; }
 
         public override IReadOnlyList<IProjectedApplicationState> InvokeStateCreator(IProjectedStateCreator creator)
         {

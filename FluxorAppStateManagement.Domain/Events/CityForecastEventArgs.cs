@@ -2,7 +2,7 @@
 {
     public class CityForecastEventArgs : ReduceEventArgs
     {
-        public IList<string> Cities { get; set; }
+        public string City { get; set; }
 
         public override IReadOnlyList<IProjectedApplicationState> InvokeStateCreator(IProjectedStateCreator creator)
         {

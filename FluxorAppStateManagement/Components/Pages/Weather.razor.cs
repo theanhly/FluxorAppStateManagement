@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using FluxorAppStateManagement.Domain;
-using FluxorAppStateManagement.Domain.Events;
+﻿using FluxorAppStateManagement.Domain;
 using FluxorAppStateManagement.State;
 using FluxorAppStateManagement.State.State;
 using Microsoft.AspNetCore.Components;
@@ -10,7 +8,6 @@ namespace FluxorAppStateManagement.Components.Pages
     public partial class Weather : IDisposable
     {
         [Inject] private StateManager StateManager { get; set; }
-        [Inject] private CounterService CounterService { get; set; }
         [Inject] private WeatherService WeatherService { get; set; }
 
         private WeatherViewState weatherViewState { get; set; } = new();
@@ -25,8 +22,11 @@ namespace FluxorAppStateManagement.Components.Pages
         {
             base.OnInitialized();
             StateManager.StateChanged += StateChangedAsync;
-            CounterService.GetCounters();
-            WeatherService.GetCities();
+
+            StateManager.UpdateState(weatherViewState, () =>
+            {
+                WeatherService.GetCities();
+            });
         }
 
         private async void StateChangedAsync(object obj, NewProjectedApplicationStateEventArgs newStateActionEvent)
@@ -42,7 +42,10 @@ namespace FluxorAppStateManagement.Components.Pages
         {
             if (!string.IsNullOrEmpty(city))
             {
-                WeatherService.AddNewForecast(city);
+                StateManager.UpdateState(weatherViewState, () =>
+                {
+                    WeatherService.AddNewForecast(city);
+                });
             }
         }
 
@@ -54,13 +57,19 @@ namespace FluxorAppStateManagement.Components.Pages
             {
                 RegionalForcasts = null, 
                 Forecasts = null 
-            };
-            WeatherService.GetForecasts(city);
+            }; 
+            StateManager.UpdateState(weatherViewState, () =>
+            {
+                WeatherService.GetForecasts(city);
+            });
         }
 
         private void AddCity()
         {
-            WeatherService.AddCity(city);
+            StateManager.UpdateState(weatherViewState, () =>
+            {
+                WeatherService.AddCity(city);
+            });
         }
     }
 }

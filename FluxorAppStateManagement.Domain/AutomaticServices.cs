@@ -22,7 +22,7 @@ namespace FluxorAppStateManagement.Domain
 
         private void TimerCallback(object? sender, ElapsedEventArgs e)
         {
-            //counterService.AddNewCounter();
+            counterService.AddNewCounter();
             //weatherService.AddNewForecast();
         }
     }

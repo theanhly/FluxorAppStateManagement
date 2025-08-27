@@ -45,62 +45,140 @@ namespace FluxorAppStateManagement.State
 
         public IReadOnlyList<IProjectedApplicationState> Create(NewCountEventArgs args)
         {
-            var counterState = new CounterState()
+            if (state is WeatherViewState weatherViewState)
             {
-                Counters = new ReadOnlyDictionary<Guid, int>(counterBackend.GetCounters())
-            };
-            return
-            [
-                new CounterViewState()
+                var newWeatherViewState = new WeatherViewState()
                 {
-                    CounterState = counterState
-                }
-            ];
+                    CounterState = GetCounterState(),
+                    WeatherState = GetWeatherStateFor(weatherViewState.WeatherState.City)
+                };
+
+                return [newWeatherViewState];
+            }
+            else if (state is CounterViewState)
+            {
+                return
+                [
+                    new CounterViewState()
+                    {
+                        CounterState = GetCounterState()
+                    }
+                ];
+            }
+
+            return [];
         }
 
         public IReadOnlyList<IProjectedApplicationState> Create(NewCounterEventArgs args)
         {
-            var counterState = new CounterState()
+            if (state is WeatherViewState weatherViewState)
             {
-                Counters = new ReadOnlyDictionary<Guid, int>(counterBackend.GetCounters())
-            };
-            return
-            [
-                new CounterViewState()
+                var newWeatherViewState = new WeatherViewState()
                 {
-                    CounterState = counterState
-                }
-            ];
+                    CounterState = GetCounterState(),
+                    WeatherState = GetWeatherStateFor(weatherViewState.WeatherState.City)
+                };
+
+                return [newWeatherViewState];
+            }
+            else if (state is CounterViewState)
+            {
+                return
+                [
+                    new CounterViewState()
+                    {
+                        CounterState = GetCounterState()
+                    }
+                ];
+            }
+
+            return [];
         }
 
         public IReadOnlyList<IProjectedApplicationState> Create(NewForecastEventArgs args)
         {
-            throw new NotImplementedException();
+            if (state is WeatherViewState)
+            {
+                var weatherViewState = new WeatherViewState()
+                {
+                    CounterState = GetCounterState(),
+                    WeatherState = GetWeatherStateFor(args.City)
+                };
+
+                return [weatherViewState];
+            }
+
+            return [];
         }
 
         public IReadOnlyList<IProjectedApplicationState> Create(ForecastsEventArgs args)
         {
-            throw new NotImplementedException();
+            if (state is WeatherViewState)
+            {
+                var weatherViewState = new WeatherViewState()
+                {
+                    CounterState = GetCounterState(),
+                    WeatherState = GetWeatherStateFor(args.City)
+                };
+
+                return [weatherViewState];
+            }
+
+            return [];
         }
 
         public IReadOnlyList<IProjectedApplicationState> Create(CounterEventArgs args)
         {
-            var counterState = new CounterState()
-            {
-                Counters = new ReadOnlyDictionary<Guid, int>(counterBackend.GetCounters())
-            };
             return
             [
                 new CounterViewState()
                 {
-                    CounterState = counterState
+                    CounterState = GetCounterState()
                 }
             ];
         }
 
         public IReadOnlyList<IProjectedApplicationState> Create(CityForecastEventArgs args)
         {
-            throw new NotImplementedException();
+            if (state is WeatherViewState)
+            {
+                var weatherViewState = new WeatherViewState()
+                {
+                    CounterState = GetCounterState(),
+                    WeatherState = GetWeatherStateFor(args.City)
+                };
+
+                return [weatherViewState];
+            }
+            return [];
+        }
+
+        private WeatherState GetWeatherStateFor(string city)
+        {
+            var weatherState = new WeatherState()
+            {
+                Cities = new ReadOnlyCollection<string>(weatherBackend.GetCities()),
+            };
+
+            if (!string.IsNullOrEmpty(city))
+            {
+                weatherState = weatherState with
+                {
+                    City = city,
+                    Forecasts = weatherBackend.GetForecastFor(city),
+                    RegionalForcasts = weatherBackend.GetForecastFor(city)
+                };
+            }
+
+            return weatherState;
+        }
+
+        public CounterState GetCounterState()
+        {
+            return new CounterState()
+            {
+                Counters = new ReadOnlyDictionary<Guid, int>(counterBackend.GetCounters())
+            };
         }
     }
 }
