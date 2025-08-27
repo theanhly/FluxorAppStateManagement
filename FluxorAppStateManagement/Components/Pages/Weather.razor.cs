@@ -1,4 +1,5 @@
 ﻿using FluxorAppStateManagement.Domain;
+using FluxorAppStateManagement.Domain.Events;
 using FluxorAppStateManagement.State;
 using FluxorAppStateManagement.State.State;
 using Microsoft.AspNetCore.Components;
@@ -9,6 +10,7 @@ namespace FluxorAppStateManagement.Components.Pages
     {
         [Inject] private StateManager StateManager { get; set; }
         [Inject] private WeatherService WeatherService { get; set; }
+        [Inject] private CounterService CounterService { get; set; }
 
         private WeatherViewState weatherViewState { get; set; } = new();
         private string city;
@@ -16,17 +18,23 @@ namespace FluxorAppStateManagement.Components.Pages
         public void Dispose()
         {
             StateManager.StateChanged -= StateChangedAsync;
+            WeatherService.WeatherChanged -= GetState;
+            CounterService.CounterChanged -= GetState;
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
             StateManager.StateChanged += StateChangedAsync;
+            WeatherService.WeatherChanged += GetState;
+            CounterService.CounterChanged += GetState;
 
-            StateManager.UpdateState(weatherViewState, () =>
-            {
-                WeatherService.GetCities();
-            });
+            WeatherService.GetCities();
+        }
+
+        private void GetState(object obj, ReduceEventArgs args)
+        {
+            StateManager.CreateProjectedApplicationStates(weatherViewState, args);
         }
 
         private async void StateChangedAsync(object obj, NewProjectedApplicationStateEventArgs newStateActionEvent)
@@ -42,10 +50,7 @@ namespace FluxorAppStateManagement.Components.Pages
         {
             if (!string.IsNullOrEmpty(city))
             {
-                StateManager.UpdateState(weatherViewState, () =>
-                {
-                    WeatherService.AddNewForecast(city);
-                });
+                WeatherService.AddNewForecast(city);
             }
         }
 
@@ -57,19 +62,13 @@ namespace FluxorAppStateManagement.Components.Pages
             {
                 RegionalForcasts = null, 
                 Forecasts = null 
-            }; 
-            StateManager.UpdateState(weatherViewState, () =>
-            {
-                WeatherService.GetForecasts(city);
-            });
+            };
+            WeatherService.GetForecasts(city);
         }
 
         private void AddCity()
         {
-            StateManager.UpdateState(weatherViewState, () =>
-            {
-                WeatherService.AddCity(city);
-            });
+            WeatherService.AddCity(city);
         }
     }
 }

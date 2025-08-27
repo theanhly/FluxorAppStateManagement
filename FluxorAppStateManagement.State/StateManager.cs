@@ -7,34 +7,18 @@ namespace FluxorAppStateManagement.State
     {
         public event EventHandler<NewProjectedApplicationStateEventArgs> StateChanged;
         private readonly StateCreatorFactory stateCreatorFactory;
-        private IProjectedApplicationState state;
 
-        public StateManager(
-            CounterService counterService,
-            WeatherService weatherService,
-            StateCreatorFactory stateCreatorFactory)
+        public StateManager(StateCreatorFactory stateCreatorFactory)
         {
             this.stateCreatorFactory = stateCreatorFactory;
-
-            counterService.CounterChanged += CreateProjectedApplicationStates;
-            weatherService.WeatherChanged += CreateProjectedApplicationStates;
         }
 
-        public void UpdateState(IProjectedApplicationState state, Action action)
-        {
-            this.state = state;
-
-            action?.Invoke();
-        }
-
-        private void CreateProjectedApplicationStates(object sender, ReduceEventArgs args)
+        public void CreateProjectedApplicationStates(IProjectedApplicationState state, ReduceEventArgs args)
         {
             var stateCreator = stateCreatorFactory.CreateCreator(state);
-            var newState = args.InvokeStateCreator(stateCreator);
-            state = newState;
-            StateChanged?.Invoke(sender, new NewProjectedApplicationStateEventArgs()
+            StateChanged?.Invoke(this, new NewProjectedApplicationStateEventArgs()
             {
-                NewState = newState
+                NewState = args.InvokeStateCreator(stateCreator)
             });
         }
     }

@@ -1,4 +1,5 @@
 ﻿using FluxorAppStateManagement.Domain;
+using FluxorAppStateManagement.Domain.Events;
 using FluxorAppStateManagement.State;
 using FluxorAppStateManagement.State.State;
 using Microsoft.AspNetCore.Components;
@@ -20,23 +21,30 @@ namespace FluxorAppStateManagement.Components.Pages
         public void Dispose()
         {
             StateManager.StateChanged -= StateChangedAsync;
+            CounterService.CounterChanged -= GetState;
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
             StateManager.StateChanged += StateChangedAsync;
-            StateManager.UpdateState(viewState, CounterService.GetCounters);
+            CounterService.CounterChanged += GetState;
+            CounterService.GetCounters();
+        }
+
+        private void GetState(object obj, ReduceEventArgs args)
+        {
+            StateManager.CreateProjectedApplicationStates(viewState, args);
         }
 
         private void IncrementCount()
         {
-            StateManager.UpdateState(viewState, () => CounterService.IncrementCounter(id));
+            CounterService.IncrementCounter(id);
         }
 
         private void AddNewCounter()
         {
-            StateManager.UpdateState(viewState, CounterService.AddNewCounter);
+            CounterService.AddNewCounter();
         }
 
         private async void StateChangedAsync(object obj, NewProjectedApplicationStateEventArgs newStateActionEvent)
