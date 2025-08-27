@@ -30,7 +30,7 @@ namespace FluxorAppStateManagement.State
 
         public IProjectedApplicationState Create(CounterEventArgs args)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public IProjectedApplicationState Create(CityForecastEventArgs args)
