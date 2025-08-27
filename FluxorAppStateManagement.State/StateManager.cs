@@ -5,19 +5,22 @@ using FluxorAppStateManagement.State.State;
 
 namespace FluxorAppStateManagement.State
 {
-    public class StateManager : IProjectedStateCreator
+    public class StateManager
     {
         public event EventHandler<NewProjectedApplicationStateEventArgs> StateChanged;
         private readonly CounterBackend counterBackend;
         private readonly WeatherBackend weatherBackend;
+        private readonly StateCreatorFactory stateCreatorFactory;
         private IProjectedApplicationState state;
 
         public StateManager(
             CounterService counterService,
             WeatherService weatherService,
             CounterBackend counterBackend,
-            WeatherBackend weatherBackend)
+            WeatherBackend weatherBackend,
+            StateCreatorFactory stateCreatorFactory)
         {
+            this.stateCreatorFactory = stateCreatorFactory;
             this.weatherBackend = weatherBackend;
             this.counterBackend = counterBackend;
 
@@ -34,28 +37,17 @@ namespace FluxorAppStateManagement.State
 
         private void CreateProjectedApplicationStates(object sender, ReduceEventArgs args)
         {
-            foreach (var newState in args.InvokeStateCreator(this))
+            var stateCreator = stateCreatorFactory.CreateCreator(state);
+
+            StateChanged?.Invoke(sender, new NewProjectedApplicationStateEventArgs()
             {
-                StateChanged?.Invoke(sender, new NewProjectedApplicationStateEventArgs()
-                {
-                    NewState = newState
-                });
-            }
+                NewState = args.InvokeStateCreator(stateCreator)
+            });
         }
 
         public IReadOnlyList<IProjectedApplicationState> Create(NewCountEventArgs args)
         {
-            if (state is WeatherViewState weatherViewState)
-            {
-                var newWeatherViewState = new WeatherViewState()
-                {
-                    CounterState = GetCounterState(),
-                    WeatherState = GetWeatherStateFor(weatherViewState.WeatherState.City)
-                };
-
-                return [newWeatherViewState];
-            }
-            else if (state is CounterViewState)
+            if (state is CounterViewState)
             {
                 return
                 [
@@ -129,13 +121,18 @@ namespace FluxorAppStateManagement.State
 
         public IReadOnlyList<IProjectedApplicationState> Create(CounterEventArgs args)
         {
-            return
-            [
-                new CounterViewState()
-                {
-                    CounterState = GetCounterState()
-                }
-            ];
+            if (state is CounterViewState)
+            {
+                return
+                [
+                    new CounterViewState()
+                    {
+                        CounterState = GetCounterState()
+                    }
+                ];
+            }
+
+            return [];
         }
 
         public IReadOnlyList<IProjectedApplicationState> Create(CityForecastEventArgs args)
@@ -150,6 +147,7 @@ namespace FluxorAppStateManagement.State
 
                 return [weatherViewState];
             }
+
             return [];
         }
 
@@ -175,6 +173,13 @@ namespace FluxorAppStateManagement.State
 
         public CounterState GetCounterState()
         {
+            new CounterViewState()
+            {
+                CounterState = new CounterState()
+                {
+                    Counters = new ReadOnlyDictionary<Guid, int>(counterBackend.GetCounters())
+                }
+            };
             return new CounterState()
             {
                 Counters = new ReadOnlyDictionary<Guid, int>(counterBackend.GetCounters())

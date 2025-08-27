@@ -6,7 +6,7 @@
 
         public int Count { get; init; }
 
-        public override IReadOnlyList<IProjectedApplicationState> InvokeStateCreator(IProjectedStateCreator creator)
+        public override IProjectedApplicationState InvokeStateCreator(IProjectedStateCreator creator)
         {
             return creator.Create(this);
         }

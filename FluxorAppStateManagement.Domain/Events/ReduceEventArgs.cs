@@ -2,6 +2,6 @@
 {
     public abstract class ReduceEventArgs : EventArgs
     {
-        public abstract IReadOnlyList<IProjectedApplicationState> InvokeStateCreator(IProjectedStateCreator creator);
+        public abstract IProjectedApplicationState InvokeStateCreator(IProjectedStateCreator creator);
     }
 }

@@ -6,7 +6,7 @@ namespace FluxorAppStateManagement.Domain.Events
     {
         public ConcurrentDictionary<Guid, int> Counters { get; set; }
 
-        public override IReadOnlyList<IProjectedApplicationState> InvokeStateCreator(IProjectedStateCreator creator)
+        public override IProjectedApplicationState InvokeStateCreator(IProjectedStateCreator creator)
         {
             return creator.Create(this);
         }
