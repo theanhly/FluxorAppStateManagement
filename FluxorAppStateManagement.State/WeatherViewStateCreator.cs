@@ -8,6 +8,11 @@ namespace FluxorAppStateManagement.State
     public class WeatherViewStateCreator(WeatherViewState state, WeatherBackend weatherBackend, CounterBackend counterBackend)
         : IProjectedStateCreator
     {
+        public IProjectedApplicationState Create()
+        {
+            return GetState(string.Empty);
+        }
+
         public IProjectedApplicationState Create(NewCountEventArgs args)
         {
             throw new NotImplementedException();

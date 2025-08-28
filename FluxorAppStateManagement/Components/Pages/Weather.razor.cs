@@ -29,7 +29,7 @@ namespace FluxorAppStateManagement.Components.Pages
             WeatherService.WeatherChanged += GetState;
             CounterService.CounterChanged += GetState;
 
-            WeatherService.GetCities();
+            StateManager.CreateProjectedApplicationStates(weatherViewState);
         }
 
         private void GetState(object obj, ReduceEventArgs args)

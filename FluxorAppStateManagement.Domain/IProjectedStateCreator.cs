@@ -4,6 +4,7 @@ namespace FluxorAppStateManagement.Domain
 {
     public interface IProjectedStateCreator
     {
+        IProjectedApplicationState Create();
         IProjectedApplicationState Create(NewCountEventArgs args);
         IProjectedApplicationState Create(NewCounterEventArgs args);
         IProjectedApplicationState Create(NewForecastEventArgs args);

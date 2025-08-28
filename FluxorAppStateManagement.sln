@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluxorAppStateManagement.St
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluxorAppStateManagement.Domain", "FluxorAppStateManagement.Domain\FluxorAppStateManagement.Domain.csproj", "{3104ED64-8A6F-4159-B922-DE64C765EAF0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluxorAppStateManagement.EventBus", "FluxorAppStateManagement.EventBus\FluxorAppStateManagement.EventBus.csproj", "{7B0010DC-4CCE-4D74-8A53-5912200327C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{3104ED64-8A6F-4159-B922-DE64C765EAF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3104ED64-8A6F-4159-B922-DE64C765EAF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3104ED64-8A6F-4159-B922-DE64C765EAF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B0010DC-4CCE-4D74-8A53-5912200327C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B0010DC-4CCE-4D74-8A53-5912200327C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B0010DC-4CCE-4D74-8A53-5912200327C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B0010DC-4CCE-4D74-8A53-5912200327C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

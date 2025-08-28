@@ -29,7 +29,7 @@ namespace FluxorAppStateManagement.Components.Pages
             base.OnInitialized();
             StateManager.StateChanged += StateChangedAsync;
             CounterService.CounterChanged += GetState;
-            CounterService.GetCounters();
+            StateManager.CreateProjectedApplicationStates(viewState);
         }
 
         private void GetState(object obj, ReduceEventArgs args)

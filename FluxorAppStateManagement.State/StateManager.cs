@@ -13,6 +13,16 @@ namespace FluxorAppStateManagement.State
             this.stateCreatorFactory = stateCreatorFactory;
         }
 
+        public void CreateProjectedApplicationStates(IProjectedApplicationState state)
+        {
+            var stateCreator = stateCreatorFactory.CreateCreator(state);
+            StateChanged?.Invoke(this, new NewProjectedApplicationStateEventArgs()
+            {
+                NewState = stateCreator.Create()
+            });
+        }
+
+
         public void CreateProjectedApplicationStates(IProjectedApplicationState state, ReduceEventArgs args)
         {
             var stateCreator = stateCreatorFactory.CreateCreator(state);

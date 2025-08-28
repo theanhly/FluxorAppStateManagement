@@ -7,6 +7,11 @@ namespace FluxorAppStateManagement.State
 {
     public class CounterViewStateCreator(CounterBackend counterBackend) : IProjectedStateCreator
     {
+        public IProjectedApplicationState Create()
+        {
+            return GetCounterViewState();
+        }
+
         public IProjectedApplicationState Create(NewCountEventArgs args)
         {
             return GetCounterViewState();
