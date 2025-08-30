@@ -1,6 +1,6 @@
 ﻿using FluxorAppStateManagement.Domain.Events;
 
-namespace FluxorAppStateManagement.Domain
+namespace FluxorAppStateManagement.Domain.Services
 {
     public class WeatherService(WeatherBackend weatherBackend)
     {
@@ -19,7 +19,7 @@ namespace FluxorAppStateManagement.Domain
         {
             _ = Task.Run(async () =>
             {
-                var forecasts = weatherBackend.GetForecastFor(city);
+                _ = weatherBackend.GetForecastFor(city);
                 await Task.Delay(2000);
                 WeatherChanged?.Invoke(this, new ForecastsEventArgs() { City = city });
             });
@@ -29,6 +29,16 @@ namespace FluxorAppStateManagement.Domain
         {
             weatherBackend.AddNewForecast(city);
             WeatherChanged?.Invoke(this, new NewForecastEventArgs() { City = city });
+        }
+
+        public void UpdateForecast(string city)
+        {
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(3000);
+                weatherBackend.UpdateForecast(city);
+                WeatherChanged?.Invoke(this, new NewForecastEventArgs() { City = city });
+            });
         }
 
         public void AddCity(string city)

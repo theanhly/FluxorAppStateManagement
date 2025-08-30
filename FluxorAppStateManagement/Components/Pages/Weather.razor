@@ -12,9 +12,10 @@
 
 <h1>Weather</h1>
 
-<p>This section demonstrates showing data.</p>
+<p>This section demonstrates showing data. Changing cities takes 1 second. Updating the Forecast takes 5 seconds.</p>
 
-<input @bind=city/> <button @onclick="@AddCity">Ok</button>
+<input @bind=city />
+<button @onclick="@AddCity">Ok</button>
 
 @foreach (var cityString in weatherViewState.WeatherState.Cities)
 {
@@ -30,23 +31,23 @@
     {
         <table class="table">
             <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
+                <tr>
+                    <th>Date</th>
+                    <th>Temp. (C)</th>
+                    <th>Temp. (F)</th>
+                    <th>Summary</th>
+                </tr>
             </thead>
             <tbody>
-            @foreach (var forecast in weatherViewState.WeatherState.Forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary (@forecast.City)</td>
-                </tr>
-            }
+                @foreach (var forecast in weatherViewState.WeatherState.Forecasts)
+                {
+                    <tr>
+                        <td>@forecast.Date.ToShortDateString()</td>
+                        <td>@forecast.TemperatureC</td>
+                        <td>@forecast.TemperatureF</td>
+                        <td>@forecast.Summary (@forecast.City)</td>
+                    </tr>
+                }
             </tbody>
         </table>
     }
@@ -80,4 +81,8 @@
     }
 </div>
 
-<button @onclick="UpdateWeather">Update weather</button>
+@if (!string.IsNullOrEmpty(city))
+{
+    <button @onclick="AddWeather">Add Forecast for @city</button>
+    <button @onclick="UpdateWeather">Update Forecast for @city</button>
+}

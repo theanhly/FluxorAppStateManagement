@@ -6,9 +6,9 @@
 
         public int Count { get; init; }
 
-        public override IProjectedApplicationState InvokeStateCreator(IProjectedStateCreator creator)
+        public override void InvokeStateCreator(IEventReducer creator)
         {
-            return creator.Create(this);
+            creator.Create(this);
         }
     }
 }

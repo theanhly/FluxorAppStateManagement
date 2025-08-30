@@ -1,6 +1,6 @@
 ﻿using FluxorAppStateManagement.Domain.Events;
 
-namespace FluxorAppStateManagement.Domain
+namespace FluxorAppStateManagement.Domain.Services
 {
     public class CounterService(CounterBackend backend)
     {

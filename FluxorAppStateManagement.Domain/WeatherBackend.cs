@@ -6,8 +6,7 @@ namespace FluxorAppStateManagement.Domain
     {
 
         private Dictionary<string, List<Weather>> forecasts = new();
-
-        public Dictionary<string, List<Weather>> GetAllForecasts() => forecasts;
+        private Dictionary<string, List<Weather>> regionalForecasts = new();
 
         public List<string> GetCities()
         {
@@ -29,6 +28,17 @@ namespace FluxorAppStateManagement.Domain
             return new List<Weather>();
         }
 
+
+        public List<Weather> GetRegionalForecastFor(string city)
+        {
+            if (regionalForecasts.TryGetValue(city, out var regionalForecastsList))
+            {
+                return regionalForecastsList;
+            }
+
+            return new List<Weather>();
+        }
+
         public void AddCity(string city)
         {
             if (!forecasts.ContainsKey(city))
@@ -40,10 +50,16 @@ namespace FluxorAppStateManagement.Domain
         public void AddNewForecast(string city)
         {
             var forecasts = new List<Weather>();
+            var regionForecasts = new List<Weather>();
 
             if (this.forecasts.TryGetValue(city, out var foundForecasts))
             {
                 forecasts = foundForecasts;
+            }
+
+            if (this.regionalForecasts.TryGetValue(city, out var regionForecast))
+            {
+                regionForecasts = regionForecast;
             }
 
             var startDate = DateOnly.FromDateTime(DateTime.Now);
@@ -56,6 +72,34 @@ namespace FluxorAppStateManagement.Domain
                 Summary = summaries[Random.Shared.Next(summaries.Length)]
             };
             forecasts.Add(newWeather);
+            regionForecasts.Add(newWeather);
+
+            this.forecasts[city] = forecasts;
+            this.regionalForecasts[city] = regionForecasts;
+        }
+
+        public void UpdateForecast(string city)
+        {
+            var forecasts = new List<Weather>();
+
+            if (this.forecasts.TryGetValue(city, out var foundForecasts))
+            {
+                forecasts.AddRange(foundForecasts);
+            }
+
+            for (int i = 0; i < forecasts.Count; i++)
+            {
+                var startDate = DateOnly.FromDateTime(DateTime.Now);
+                var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
+                var newWeather = new Weather()
+                {
+                    City = city,
+                    Date = forecasts[i].Date,
+                    TemperatureC = Random.Shared.Next(-20, 55),
+                    Summary = summaries[Random.Shared.Next(summaries.Length)]
+                };
+                forecasts[i] = newWeather;
+            }
 
             this.forecasts[city] = forecasts;
         }

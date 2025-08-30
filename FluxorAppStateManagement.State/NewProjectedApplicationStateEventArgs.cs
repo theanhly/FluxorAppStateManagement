@@ -1,4 +1,4 @@
-﻿using FluxorAppStateManagement.Domain;
+﻿using FluxorAppStateManagement.State.State;
 
 namespace FluxorAppStateManagement.State
 {

@@ -1,7 +1,7 @@
 ﻿using System.Timers;
 using Timer = System.Timers.Timer;
 
-namespace FluxorAppStateManagement.Domain
+namespace FluxorAppStateManagement.Domain.Services
 {
     public class AutomaticServices
     {

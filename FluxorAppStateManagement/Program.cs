@@ -1,5 +1,6 @@
 using FluxorAppStateManagement.Components;
 using FluxorAppStateManagement.Domain;
+using FluxorAppStateManagement.Domain.Services;
 using FluxorAppStateManagement.State;
 
 namespace FluxorAppStateManagement
@@ -13,13 +14,13 @@ namespace FluxorAppStateManagement
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
-            builder.Services.AddSingleton<StateManager>();
             builder.Services.AddSingleton<CounterService>();
             builder.Services.AddSingleton<WeatherService>();
             builder.Services.AddSingleton<CounterBackend>();
             builder.Services.AddSingleton<WeatherBackend>();
             builder.Services.AddSingleton<AutomaticServices>();
-            builder.Services.AddSingleton<StateCreatorFactory>();
+            builder.Services.AddSingleton<EventBus.EventBus>();
+            builder.Services.InitializeState();
 
             var app = builder.Build();
             app.Services.GetRequiredService<AutomaticServices>();

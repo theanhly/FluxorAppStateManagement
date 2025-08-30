@@ -1,5 +1,5 @@
-﻿using FluxorAppStateManagement.Domain;
-using FluxorAppStateManagement.Domain.Events;
+﻿using FluxorAppStateManagement.Domain.Events;
+using FluxorAppStateManagement.Domain.Services;
 using FluxorAppStateManagement.State;
 using FluxorAppStateManagement.State.State;
 using Microsoft.AspNetCore.Components;
@@ -11,13 +11,14 @@ namespace FluxorAppStateManagement.Components.Pages
         [Inject] private StateManager StateManager { get; set; }
         [Inject] private WeatherService WeatherService { get; set; }
         [Inject] private CounterService CounterService { get; set; }
+        [Inject] private EventBus.EventBus EventBus { get; set; }
 
         private WeatherViewState weatherViewState { get; set; } = new();
         private string city;
 
         public void Dispose()
         {
-            StateManager.StateChanged -= StateChangedAsync;
+            EventBus.Unsubscribe<NewProjectedApplicationStateEventArgs>(StateChangedAsync);
             WeatherService.WeatherChanged -= GetState;
             CounterService.CounterChanged -= GetState;
         }
@@ -25,7 +26,7 @@ namespace FluxorAppStateManagement.Components.Pages
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            StateManager.StateChanged += StateChangedAsync;
+            EventBus.Subscribe<NewProjectedApplicationStateEventArgs>(StateChangedAsync);
             WeatherService.WeatherChanged += GetState;
             CounterService.CounterChanged += GetState;
 
@@ -37,7 +38,7 @@ namespace FluxorAppStateManagement.Components.Pages
             StateManager.CreateProjectedApplicationStates(weatherViewState, args);
         }
 
-        private async void StateChangedAsync(object obj, NewProjectedApplicationStateEventArgs newStateActionEvent)
+        private async void StateChangedAsync(NewProjectedApplicationStateEventArgs newStateActionEvent)
         {
             if (newStateActionEvent.NewState is WeatherViewState weatherViewState)
             {
@@ -46,11 +47,19 @@ namespace FluxorAppStateManagement.Components.Pages
             }
         }
 
-        private void UpdateWeather()
+        private void AddWeather()
         {
             if (!string.IsNullOrEmpty(city))
             {
                 WeatherService.AddNewForecast(city);
+            }
+        }
+
+        private void UpdateWeather()
+        {
+            if (!string.IsNullOrEmpty(city))
+            {
+                WeatherService.UpdateForecast(city);
             }
         }
 

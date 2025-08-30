@@ -1,5 +1,5 @@
-﻿using FluxorAppStateManagement.Domain;
-using FluxorAppStateManagement.Domain.Events;
+﻿using FluxorAppStateManagement.Domain.Events;
+using FluxorAppStateManagement.Domain.Services;
 using FluxorAppStateManagement.State;
 using FluxorAppStateManagement.State.State;
 using Microsoft.AspNetCore.Components;
@@ -14,20 +14,23 @@ namespace FluxorAppStateManagement.Components.Pages
         [Inject]
         private CounterService CounterService { get; set; }
 
+        [Inject]
+        private EventBus.EventBus EventBus { get; set; }
+
         private CounterViewState viewState = new();
 
         private Guid id;
 
         public void Dispose()
         {
-            StateManager.StateChanged -= StateChangedAsync;
+            EventBus.Unsubscribe<NewProjectedApplicationStateEventArgs>(StateChangedAsync);
             CounterService.CounterChanged -= GetState;
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            StateManager.StateChanged += StateChangedAsync;
+            EventBus.Subscribe<NewProjectedApplicationStateEventArgs>(StateChangedAsync);
             CounterService.CounterChanged += GetState;
             StateManager.CreateProjectedApplicationStates(viewState);
         }
@@ -47,7 +50,7 @@ namespace FluxorAppStateManagement.Components.Pages
             CounterService.AddNewCounter();
         }
 
-        private async void StateChangedAsync(object obj, NewProjectedApplicationStateEventArgs newStateActionEvent)
+        private async void StateChangedAsync(NewProjectedApplicationStateEventArgs newStateActionEvent)
         {
             if (newStateActionEvent.NewState is CounterViewState counterViewState)
             {

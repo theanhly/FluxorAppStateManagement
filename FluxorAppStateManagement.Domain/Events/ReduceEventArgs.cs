@@ -2,6 +2,6 @@
 {
     public abstract class ReduceEventArgs : EventArgs
     {
-        public abstract IProjectedApplicationState InvokeStateCreator(IProjectedStateCreator creator);
+        public abstract void InvokeStateCreator(IEventReducer creator);
     }
 }
