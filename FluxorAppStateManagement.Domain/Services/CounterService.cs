@@ -2,20 +2,19 @@
 
 namespace FluxorAppStateManagement.Domain.Services
 {
-    public class CounterService(CounterBackend backend)
+    public class CounterService(CounterBackend backend, EventBus.EventBus eventBus)
     {
-        public event EventHandler<ReduceEventArgs> CounterChanged;
         
         public void GetCounters()
         {
-            CounterChanged?.Invoke(this, new CounterEventArgs());
+            eventBus.Publish<ReduceEventArgs>(new CounterEventArgs());
         }
 
         public bool IncrementCounter(Guid id)
         {
             if (backend.IncrementCounter(id))
             {
-                CounterChanged?.Invoke(this, new NewCountEventArgs());
+                eventBus.Publish<ReduceEventArgs>(new NewCountEventArgs());
                 return true;
             }
 
@@ -25,7 +24,7 @@ namespace FluxorAppStateManagement.Domain.Services
         public void AddNewCounter()
         {
             backend.AddNewCounter();
-            CounterChanged?.Invoke(this, new NewCounterEventArgs());
+            eventBus.Publish<ReduceEventArgs>(new NewCounterEventArgs());
         }
     }
 }

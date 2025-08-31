@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FluxorAppStateManagement.EventBus\FluxorAppStateManagement.EventBus.csproj" />
+  </ItemGroup>
+
 </Project>

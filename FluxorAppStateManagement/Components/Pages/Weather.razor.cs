@@ -10,30 +10,29 @@ namespace FluxorAppStateManagement.Components.Pages
     {
         [Inject] private StateManager StateManager { get; set; }
         [Inject] private WeatherService WeatherService { get; set; }
-        [Inject] private CounterService CounterService { get; set; }
         [Inject] private EventBus.EventBus EventBus { get; set; }
 
         private WeatherViewState weatherViewState { get; set; } = new();
         private string city;
+        private bool updatingForecasts = false;
+        private bool loadingForecasts => weatherViewState.WeatherState.Forecasts == null || updatingForecasts;
 
         public void Dispose()
         {
             EventBus.Unsubscribe<NewProjectedApplicationStateEventArgs>(StateChangedAsync);
-            WeatherService.WeatherChanged -= GetState;
-            CounterService.CounterChanged -= GetState;
+            EventBus.Unsubscribe<ReduceEventArgs>(GetState);
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
             EventBus.Subscribe<NewProjectedApplicationStateEventArgs>(StateChangedAsync);
-            WeatherService.WeatherChanged += GetState;
-            CounterService.CounterChanged += GetState;
+            EventBus.Subscribe<ReduceEventArgs>(GetState);
 
             StateManager.CreateProjectedApplicationStates(weatherViewState);
         }
 
-        private void GetState(object obj, ReduceEventArgs args)
+        private void GetState(ReduceEventArgs args)
         {
             StateManager.CreateProjectedApplicationStates(weatherViewState, args);
         }
@@ -42,6 +41,10 @@ namespace FluxorAppStateManagement.Components.Pages
         {
             if (newStateActionEvent.NewState is WeatherViewState weatherViewState)
             {
+                if (newStateActionEvent.EventArgs is NewForecastEventArgs && updatingForecasts)
+                {
+                    updatingForecasts = false;
+                }
                 this.weatherViewState = weatherViewState;
                 await InvokeAsync(StateHasChanged);
             }
@@ -59,6 +62,11 @@ namespace FluxorAppStateManagement.Components.Pages
         {
             if (!string.IsNullOrEmpty(city))
             {
+                weatherViewState.WeatherState = weatherViewState.WeatherState with
+                {
+                    Forecasts = null
+                };
+                updatingForecasts = true;
                 WeatherService.UpdateForecast(city);
             }
         }
@@ -69,8 +77,8 @@ namespace FluxorAppStateManagement.Components.Pages
 
             weatherViewState.WeatherState = weatherViewState.WeatherState with
             {
-                RegionalForcasts = null, 
-                Forecasts = null 
+                RegionalForcasts = null,
+                Forecasts = null
             };
             WeatherService.GetForecasts(city);
         }

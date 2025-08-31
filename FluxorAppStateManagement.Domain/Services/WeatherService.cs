@@ -2,7 +2,7 @@
 
 namespace FluxorAppStateManagement.Domain.Services
 {
-    public class WeatherService(WeatherBackend weatherBackend)
+    public class WeatherService(WeatherBackend weatherBackend, EventBus.EventBus eventBus)
     {
         public event EventHandler<ReduceEventArgs> WeatherChanged;
 
@@ -11,7 +11,7 @@ namespace FluxorAppStateManagement.Domain.Services
             _ = Task.Run(async () =>
             {
                 await Task.Delay(1000);
-                WeatherChanged?.Invoke(this, new CityForecastEventArgs());
+                eventBus.Publish<ReduceEventArgs>(new CityForecastEventArgs());
             });
         }
 
@@ -21,14 +21,14 @@ namespace FluxorAppStateManagement.Domain.Services
             {
                 _ = weatherBackend.GetForecastFor(city);
                 await Task.Delay(2000);
-                WeatherChanged?.Invoke(this, new ForecastsEventArgs() { City = city });
+                eventBus.Publish<ReduceEventArgs>(new ForecastsEventArgs() { City = city });
             });
         }
 
         public void AddNewForecast(string city)
         {
             weatherBackend.AddNewForecast(city);
-            WeatherChanged?.Invoke(this, new NewForecastEventArgs() { City = city });
+            eventBus.Publish<ReduceEventArgs>(new NewForecastEventArgs() { City = city });
         }
 
         public void UpdateForecast(string city)
@@ -37,14 +37,14 @@ namespace FluxorAppStateManagement.Domain.Services
             {
                 await Task.Delay(3000);
                 weatherBackend.UpdateForecast(city);
-                WeatherChanged?.Invoke(this, new NewForecastEventArgs() { City = city });
+                eventBus.Publish<ReduceEventArgs>(new NewForecastEventArgs() { City = city });
             });
         }
 
         public void AddCity(string city)
         {
             weatherBackend.AddCity(city);
-            WeatherChanged?.Invoke(this, new CityForecastEventArgs() { City = city });
+            eventBus.Publish<ReduceEventArgs>(new CityForecastEventArgs() { City = city });
         }
     }
 }

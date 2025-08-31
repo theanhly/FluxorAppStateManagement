@@ -24,18 +24,18 @@ namespace FluxorAppStateManagement.Components.Pages
         public void Dispose()
         {
             EventBus.Unsubscribe<NewProjectedApplicationStateEventArgs>(StateChangedAsync);
-            CounterService.CounterChanged -= GetState;
+            EventBus.Unsubscribe<ReduceEventArgs>(GetState);
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
             EventBus.Subscribe<NewProjectedApplicationStateEventArgs>(StateChangedAsync);
-            CounterService.CounterChanged += GetState;
+            EventBus.Subscribe<ReduceEventArgs>(GetState);
             StateManager.CreateProjectedApplicationStates(viewState);
         }
 
-        private void GetState(object obj, ReduceEventArgs args)
+        private void GetState(ReduceEventArgs args)
         {
             StateManager.CreateProjectedApplicationStates(viewState, args);
         }

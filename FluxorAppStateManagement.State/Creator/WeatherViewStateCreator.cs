@@ -29,7 +29,7 @@ namespace FluxorAppStateManagement.State.Creator
             // state with what he selected.
             if (state.WeatherState.City == args.City)
             {
-                GetState(args.City);
+                GetState(args.City, args);
             }
         }
 
@@ -47,7 +47,7 @@ namespace FluxorAppStateManagement.State.Creator
             GetState(args.City);
         }
 
-        private void GetState(string city)
+        private void GetState(string city, EventArgs args = null)
         {
             var state = new WeatherViewState()
             {
@@ -58,7 +58,7 @@ namespace FluxorAppStateManagement.State.Creator
                 WeatherState = GetWeatherStateFor(city)
             };
 
-            eventBus.Publish(new NewProjectedApplicationStateEventArgs() { NewState = state });
+            eventBus.Publish(new NewProjectedApplicationStateEventArgs() { NewState = state, EventArgs = args });
         }
 
         private WeatherState GetWeatherStateFor(string city)

@@ -6,7 +6,7 @@
 
         public void Publish<T>(T args)
         {
-            if (eventArgsBus.TryGetValue(args.GetType(), out HashSet<Delegate> list))
+            if (eventArgsBus.TryGetValue(typeof(T), out HashSet<Delegate> list))
             {
                 foreach (var handler in list)
                 {
