@@ -27,7 +27,7 @@
     <div>
         @if (loadingForecasts)
         {
-            <p><em>Loading forecasts...</em></p>
+            <p><em>Loading forecasts for <b>@city</b>...</em></p>
         }
         else
         {
@@ -55,7 +55,7 @@
         }
         @if (weatherViewState.WeatherState.RegionalForcasts == null)
         {
-            <p><em>Loading regional forecasts...</em></p>
+            <p><em>Loading regional forecasts <b>@city</b>...</em></p>
         }
         else
         {

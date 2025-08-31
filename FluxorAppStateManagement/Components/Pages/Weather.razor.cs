@@ -74,6 +74,7 @@ namespace FluxorAppStateManagement.Components.Pages
         private void GetForecastsForCity(string city)
         {
             this.city = city;
+            updatingForecasts = false;
 
             weatherViewState.WeatherState = weatherViewState.WeatherState with
             {

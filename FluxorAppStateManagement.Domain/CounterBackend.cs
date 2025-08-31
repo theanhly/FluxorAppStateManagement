@@ -1,13 +1,10 @@
-﻿using FluxorAppStateManagement.Domain.Events;
-using System.Collections.Concurrent;
-using System.Diagnostics.Metrics;
+﻿using System.Collections.Concurrent;
 
 namespace FluxorAppStateManagement.Domain
 {
     public class CounterBackend
     {
         private ConcurrentDictionary<Guid, int> counters = new();
-
 
         public ConcurrentDictionary<Guid, int> GetCounters() => counters;
 
